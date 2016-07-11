@@ -1,6 +1,11 @@
 from graphics import *
 import random
 
+#Screen settings
+WIDTH = 1000
+HEIGHT = 720
+
+
 # Variables for adjusting evolution
 mutation_range = 20
 speed = .001
@@ -12,7 +17,7 @@ target_color3 = 140
 max_fit = 10
 
 # Setup
-win = GraphWin('practice', 500, 500)
+win = GraphWin('practice', WIDTH, HEIGHT)
 dot_dict = {}
 backc = color_rgb(target_color1, target_color2, target_color3)
 win.setBackground(backc)
@@ -24,8 +29,8 @@ def spawn_dots(n):
         r_r = random.randrange(0,255)
         r_g = random.randrange(0,255)
         r_b = random.randrange(0,255)
-        r_x = random.randrange(0,500)
-        r_y = random.randrange(0,500)
+        r_x = random.randrange(0,WIDTH)
+        r_y = random.randrange(0,HEIGHT)
         dot1 = Dot(r_x, r_y, r_r, r_g, r_b)
         dot1.draw_dot()
         dot_list.append(dot1)
@@ -70,7 +75,7 @@ def fitness_function(red, green, blue):
         max_c = 255 - target_color3
     bfit = ((max_c - bd)/max_c) * max_fit
 # Determines and returns combined fitness
-    fit = rfit + gfit + bfit
+    fit = (rfit**2 + gfit**2 + bfit**2)**0.5
     return fit
 
 
@@ -142,7 +147,7 @@ class Dot(object):
                     m_red = self.r
                     m_green = self.g
                     m_blue = mutate(self.b)
-                newd = Dot(random.randrange(0, 500), random.randrange(0, 500), m_red, m_green, m_blue)
+                newd = Dot(random.randrange(0, WIDTH), random.randrange(0, HEIGHT), m_red, m_green, m_blue)
                 time.sleep(speed)
                 newd.draw_dot()
                 dot_list.append(newd)
