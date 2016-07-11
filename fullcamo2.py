@@ -82,15 +82,14 @@ def fitness_function(red, green, blue):
 def predator(d):
 #    print "PREDATOR WORKING"
     while len(d) > carrying_capacity:
-        i = random.randrange(len(d))
-        f = d[i].fit
+        victim = random.choice(d)
+        f = victim.fit
         chance_killed = ((3 * max_fit + 1) - f) / (3 * max_fit)
         p = random.random()
         if chance_killed > p:
-            failed = d[i]
-            failed.undraw_dot()
-            d.remove(failed)
-            del(failed)
+            victim.undraw_dot()
+            d.remove(victim)
+            del(victim)
 
 # Creates dot class
 class Dot(object):
@@ -169,8 +168,8 @@ def evolve(start_dots):
     while True:
         for i in range(len(parent_gen)):
             new_adults = parent_gen[i].reproduce(win)
-            for i in new_adults:
-                parent_gen.append(i)
+            for j in new_adults:
+                parent_gen.append(j)
             ticker = ticker + 1
         predator(parent_gen)
     return parent_gen
