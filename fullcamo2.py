@@ -7,6 +7,7 @@ HEIGHT = 720
 
 
 # Variables for adjusting evolution
+start_dots = 20
 mutation_range = 20
 speed = .001
 carrying_capacity = 30
@@ -153,24 +154,21 @@ class Dot(object):
         else:
             return []
 
-def evolve(start_dots):
+def loop(parent_gen, fitlist):
+    for i in range(len(parent_gen)):
+        new_adults = parent_gen[i].reproduce()
+        for j in new_adults:
+            parent_gen.append(j)
+    predator(parent_gen)
+    win.update()
+
+def main():
 #    print("EVOLVE WORKING")
     parent_gen = spawn_dots(start_dots)
-    ticker = 0
     fitlist = []
     while True:
-        for i in range(len(parent_gen)):
-            new_adults = parent_gen[i].reproduce()
-            for j in new_adults:
-                parent_gen.append(j)
-            ticker+=1
-        predator(parent_gen)
-        win.update()
+        loop(parent_gen, fitlist)
     return parent_gen
 
-# testing area
-
-# runs program
-g = evolve(20)
-
-win.mainloop()
+if __name__=="__main__":
+    main()
