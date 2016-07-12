@@ -5,7 +5,6 @@ import random
 WIDTH = 1000
 HEIGHT = 720
 
-
 # Variables for adjusting evolution
 start_dots = 20
 mutation_range = 20
@@ -16,6 +15,8 @@ target_color1 = 120
 target_color2 = 130
 target_color3 = 140
 max_fit = 10
+max_fit_total = float((((max_fit ** 2) * 3) ** 0.5))
+seed = 20
 
 # Setup
 win = GraphWin('practice', WIDTH, HEIGHT)
@@ -52,6 +53,13 @@ def mutate(x):
         new_x = abs(random.randrange(0, 255))
         return new_x
 
+def fit_ave(values):
+    total = 0
+    for i in values:
+        total += i.fit
+    ave = float(total) / len(values)
+    return (ave / max_fit_total)
+
 # Determines fitness level based on all colors
 def fitness_function(red, green, blue):
 # Determines red fitness
@@ -85,7 +93,7 @@ def predator(d):
     while len(d) > carrying_capacity:
         victim = random.choice(d)
         f = victim.fit
-        chance_killed = ((3 * max_fit + 1) - f) / (3 * max_fit)
+        chance_killed = (max_fit_total - f) / (max_fit_total)
         p = random.random()
         if chance_killed > p:
             victim.undraw_dot()
@@ -115,18 +123,18 @@ class Dot(object):
         self.circle.setOutline(color)
 
     def reproduce(self):
-        repro_p = ((3 * max_fit) - float(self.fit)) / float(max_fit * 3)
+        repro_p = (max_fit_total - float(self.fit)) / float(max_fit_total)
 # Determines whether dot will reproduce
         if repro_p > random.random():
             self.color_flash('white')
 # Determines number of offspring based on fitness
-            if self.fit < ((3 * max_fit) - 3):
+            if self.fit < ((max_fit_total) - 3):
                 offspring = (int(self.fit) + 1)
-            elif ((3 * max_fit) - 3) <= self.fit < ((3 * max_fit) - 2):
+            elif (max_fit_total - 3) <= self.fit < (max_fit_total - 2):
                 offspring = (int(self.fit) + 1) * 2
-            elif ((3 * max_fit) - 2) <= self.fit < ((3 * max_fit) - 1):
+            elif (max_fit_total - 2) <= self.fit < (max_fit_total - 1):
                 offspring = (int(self.fit) + 1) * 4
-            elif ((3 * max_fit) - 1) <= self.fit:
+            elif (max_fit_total - 1) <= self.fit:
                 offspring = (int(self.fit) + 1) * 8
 
             dot_list = []
@@ -143,12 +151,11 @@ class Dot(object):
                     m_green = mutate(self.g)
                 elif mut_value == 2:
                     m_blue = mutate(self.b)
-
                 newd = Dot(random.randrange(0, WIDTH), random.randrange(0, HEIGHT), m_red, m_green, m_blue)
                 time.sleep(speed)
                 newd.draw_dot()
                 dot_list.append(newd)
-                print(newd.fit)
+                # print(newd.fit)
             self.color_flash('black')
             return dot_list
         else:
@@ -172,3 +179,35 @@ def main():
 
 if __name__=="__main__":
     main()
+
+
+# testing area
+def evolve_record(start_dots):
+    x = spawn_dots(start_dots)
+    starting_fitness = str(fit_ave(x))
+    file = open("popfit.txt", "a")
+    file.write("Starting fitness: " + starting_fitness + '\n')
+    file.close()
+    parent_gen = x
+    fitlist = []
+    counter = 0
+    while counter <=200:
+        for i in range(len(parent_gen)):
+            new_adults = parent_gen[i].reproduce(win)
+            for j in new_adults:
+                parent_gen.append(j)
+        predator(parent_gen)
+# Finds average fitness and writes to file
+        popfit = fit_ave(parent_gen)
+        file = open("popfit.txt", "a")
+        file.write(str(popfit) + '\n')
+        file.close()
+        counter += 1
+
+# runs program
+file = open("popfit.txt", "a")
+file.write("Experiment Settings:" + '\n')
+file.write("Number of starting dots: " + str(seed) + '\n')
+file.write("Mutation range: " + str(mutation_range) + '\n')
+file.write("Carrying capacity: " + str(carrying_capacity) + '\n')
+file.close()
