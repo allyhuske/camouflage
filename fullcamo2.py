@@ -112,13 +112,11 @@ class Dot(object):
 
     def color_flash(self, color):
         self.circle.setOutline(color)
-        win.update()
 
-    def reproduce(self, win):
+    def reproduce(self):
         repro_p = ((3 * max_fit) - float(self.fit)) / float(max_fit * 3)
-        k = random.random()
 # Determines whether dot will reproduce
-        if repro_p > k:
+        if repro_p > random.random():
             self.color_flash('white')
 # Determines number of offspring based on fitness
             if self.fit < ((3 * max_fit) - 3):
@@ -133,27 +131,23 @@ class Dot(object):
             dot_list = []
 # Mutates one of the dot's colors
             for i in range(offspring):
+                m_red = self.r
+                m_green = self.g
+                m_blue = self.b
+
                 mut_value = random.randrange(2)
                 if mut_value == 0:
                     m_red = mutate(self.r)
-                    m_green = self.g
-                    m_blue = self.b
                 elif mut_value == 1:
-                    m_red = self.r
                     m_green = mutate(self.g)
-                    m_blue = self.b
                 elif mut_value == 2:
-                    m_red = self.r
-                    m_green = self.g
                     m_blue = mutate(self.b)
+
                 newd = Dot(random.randrange(0, WIDTH), random.randrange(0, HEIGHT), m_red, m_green, m_blue)
                 time.sleep(speed)
                 newd.draw_dot()
                 dot_list.append(newd)
                 print(newd.fit)
-    #            if self.color != newd.color:
-    #                print("A mutation occurred!")
-                win.update()
             self.color_flash('black')
             return dot_list
         else:
@@ -161,17 +155,17 @@ class Dot(object):
 
 def evolve(start_dots):
 #    print("EVOLVE WORKING")
-    x = spawn_dots(start_dots)
+    parent_gen = spawn_dots(start_dots)
     ticker = 0
-    parent_gen = x
     fitlist = []
     while True:
         for i in range(len(parent_gen)):
-            new_adults = parent_gen[i].reproduce(win)
+            new_adults = parent_gen[i].reproduce()
             for j in new_adults:
                 parent_gen.append(j)
-            ticker = ticker + 1
+            ticker+=1
         predator(parent_gen)
+        win.update()
     return parent_gen
 
 # testing area
