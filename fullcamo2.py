@@ -80,7 +80,7 @@ def fitness_function(red, green, blue):
 
 
 def predator(d):
-#    print "PREDATOR WORKING"
+#    print("PREDATOR WORKING")
     while len(d) > carrying_capacity:
         victim = random.choice(d)
         f = victim.fit
@@ -150,9 +150,9 @@ class Dot(object):
                 time.sleep(speed)
                 newd.draw_dot()
                 dot_list.append(newd)
-                print newd.fit
+                print(newd.fit)
     #            if self.color != newd.color:
-    #                print "A mutation occurred!"
+    #                print("A mutation occurred!")
                 win.update()
             self.color_flash('black')
             return dot_list
@@ -160,7 +160,7 @@ class Dot(object):
             return []
 
 def evolve(start_dots):
-#    print "EVOLVE WORKING"
+#    print("EVOLVE WORKING")
     x = spawn_dots(start_dots)
     ticker = 0
     parent_gen = x
