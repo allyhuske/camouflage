@@ -1,5 +1,6 @@
 from graphics import *
 import random
+import cProfile
 
 #Screen settings
 WIDTH = 1000
@@ -160,25 +161,19 @@ class Dot(object):
             return dot_list
         else:
             return []
-
-def loop(parent_gen, fitlist):
+def simulation_step (parent_gen, fitlist):
     for i in range(len(parent_gen)):
         new_adults = parent_gen[i].reproduce()
         for j in new_adults:
             parent_gen.append(j)
     predator(parent_gen)
+
+def loop(parent_gen, fitlist):
+    for i in range(1000):
+        simulation_step(parent_gen, fitlist)
     win.update()
 
-def main():
-#    print("EVOLVE WORKING")
-    parent_gen = spawn_dots(start_dots)
-    fitlist = []
-    while True:
-        loop(parent_gen, fitlist)
-    return parent_gen
 
-if __name__=="__main__":
-    main()
 
 
 # testing area
@@ -192,11 +187,7 @@ def evolve_record(start_dots):
     fitlist = []
     counter = 0
     while counter <=200:
-        for i in range(len(parent_gen)):
-            new_adults = parent_gen[i].reproduce(win)
-            for j in new_adults:
-                parent_gen.append(j)
-        predator(parent_gen)
+        simulation_step(parent_gen, fitlist)
 # Finds average fitness and writes to file
         popfit = fit_ave(parent_gen)
         file = open("popfit.txt", "a")
@@ -211,3 +202,9 @@ file.write("Number of starting dots: " + str(seed) + '\n')
 file.write("Mutation range: " + str(mutation_range) + '\n')
 file.write("Carrying capacity: " + str(carrying_capacity) + '\n')
 file.close()
+
+def main():
+    evolve_record(100)
+
+if __name__=="__main__":
+    cProfile.run("main()")
