@@ -177,12 +177,10 @@ def loop(parent_gen, fitlist):
 
 
 # testing area
-def evolve_record(start_dots):
+def evolve_record(start_dots, output):
     x = spawn_dots(start_dots)
     starting_fitness = str(fit_ave(x))
-    file = open("popfit.txt", "a")
-    file.write("Starting fitness: " + starting_fitness + '\n')
-    file.close()
+    output.write("Starting fitness: " + starting_fitness + '\n')
     parent_gen = x
     fitlist = []
     counter = 0
@@ -190,21 +188,19 @@ def evolve_record(start_dots):
         simulation_step(parent_gen, fitlist)
 # Finds average fitness and writes to file
         popfit = fit_ave(parent_gen)
-        file = open("popfit.txt", "a")
-        file.write(str(popfit) + '\n')
-        file.close()
+        output.write(str(popfit) + '\n')
         counter += 1
 
 # runs program
-file = open("popfit.txt", "a")
-file.write("Experiment Settings:" + '\n')
-file.write("Number of starting dots: " + str(seed) + '\n')
-file.write("Mutation range: " + str(mutation_range) + '\n')
-file.write("Carrying capacity: " + str(carrying_capacity) + '\n')
-file.close()
 
 def main():
-    evolve_record(100)
+    f = open("popfit.txt", "a")
+    f.write("Experiment Settings:" + '\n')
+    f.write("Number of starting dots: " + str(seed) + '\n')
+    f.write("Mutation range: " + str(mutation_range) + '\n')
+    f.write("Carrying capacity: " + str(carrying_capacity) + '\n')
+    evolve_record(100, f)
+    f.close()
 
 if __name__=="__main__":
     cProfile.run("main()")
